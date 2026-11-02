@@ -1,0 +1,39 @@
+# 1. Workflow name: appear in Github Actions tab
+name: Auto-deploy front-end web page
+
+# 2. Trigger Event: when to start this workflow?
+on:
+  push:
+    branches:
+      - gh-pages # trigger when you push to branch gh-pages
+  
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# 3. Jobs: what to do for this workflow?
+jobs:
+  build-and-deploy:
+    # Virtual env (server) provided by GitHub, Ubuntu is most commonly used
+    runs-on: ubuntu-latest
+
+    # Steps: step-wise operations in virtual env
+    steps:
+      # Step 1: clone your code. Use official Action plugin
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Cheout repo source code
+        uses: actions/checkout@v4
+
+      # Step 2: simulate local operations。 If static pages, simple checks are enough.
+      # E.g., run python scripts.
+      - name: Check file structure (verifiy code is downloaded)
+        run: |
+          echo "Checking files in current directory:"
+          ls -la
+
+      # Step 3: auto-deploy to Github Pages
+      # Here the polular 3rd-party deployment plugin is used.
+      - name: Auto-deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: . # Folder of web pages to be deplyed. If your index.html is under root dir, write "."; otherwise, write according dir path.
+          branch: gh-pages # 自动化流水线会帮你把打包后的网页推送到这个分支
